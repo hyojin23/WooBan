@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_menu_vod_upload"
+            android:icon="@drawable/ic_videocam_black_24dp"
+            android:title="@string/navigation_menu_vod_upload"
+            />
+        <item
+            android:id="@+id/navigation_menu_watch_later"
+            android:icon="@drawable/ic_subscriptions_black_24dp"
+            android:title="@string/navigation_menu_watch_later"
+            />
+        <item
+            android:id="@+id/navigation_menu_chatting"
+            android:icon="@drawable/ic_textsms_black_24dp"
+            android:title="@string/navigation_menu_chatting"
+            />
+        <item
+            android:id="@+id/navigation_menu_setting"
+            android:icon="@drawable/ic_build_black_24dp"
+            android:title="@string/navigation_menu_setting"
+            />
+    </group>
+</menu>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_select"
+    android:layout_width="135dp"
+    android:layout_height="135dp">
+
+
+    <ImageView
+        android:id="@+id/video_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/blue_gradient"
+        android:paddingTop="3dp"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/video_duration_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

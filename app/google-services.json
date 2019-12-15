@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "12559682915",
+    "firebase_url": "https://tranquil-buffer-241604.firebaseio.com",
+    "project_id": "tranquil-buffer-241604",
+    "storage_bucket": "tranquil-buffer-241604.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12559682915:android:46ceb8a95f8b98d990d756",
+        "android_client_info": {
+          "package_name": "com.example.mlkitexample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12559682915-jl3ic12u6v9s7c8tku9t35itil0hr6l7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx87RlbnLQFcz-9eAWrk94cBoRWYsaVdc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12559682915-jl3ic12u6v9s7c8tku9t35itil0hr6l7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12559682915:android:af2d8d6d032e6df190d756",
+        "android_client_info": {
+          "package_name": "com.example.wooban"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12559682915-jl3ic12u6v9s7c8tku9t35itil0hr6l7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx87RlbnLQFcz-9eAWrk94cBoRWYsaVdc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12559682915-jl3ic12u6v9s7c8tku9t35itil0hr6l7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

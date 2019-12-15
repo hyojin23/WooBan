@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--배경 테마 색상-->
+    <item
+        android:drawable="@color/colorSplash"/>
+    <!--스플래쉬 이미지 파일-->
+    <item android:id="@+id/splash_layer">
+        <bitmap android:src="@drawable/splash_image"
+            android:gravity="center"/>
+    </item>
+</layer-list>
+
+

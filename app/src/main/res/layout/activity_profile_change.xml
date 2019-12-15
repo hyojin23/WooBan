@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_up_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorToolbar"
+    tools:context=".SignUpActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <ImageView
+            android:id="@+id/profile_change_user_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/profile_icon"
+            app:layout_constraintDimensionRatio="H,5.5:2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+
+
+        <Button
+            android:id="@+id/profile_change_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/sign_up_profile_image_change"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_change_user_image" />
+
+
+
+
+        <TextView
+            android:id="@+id/profile_change_name_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            app:layout_constraintRight_toLeftOf="@+id/profile_change_name_edit"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_change_image_button"
+            app:layout_constraintHorizontal_weight="1"
+
+            />
+
+
+        <EditText
+            android:id="@+id/profile_change_name_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#FFFFFF"
+            android:hint="@string/sign_up_name"
+            android:inputType="text"
+            android:maxLength="16"
+            android:padding="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/profile_change_image_button"
+            app:layout_constraintLeft_toRightOf="@+id/profile_change_name_text"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_weight="5"
+            />
+
+        <Button
+            android:id="@+id/profile_change_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/wine"
+            android:text="@string/profile_change_button"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/profile_change_name_edit" />
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

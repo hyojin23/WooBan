@@ -1,0 +1,30 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+<!-- 오버플로우 아이콘 변경에 사용 -->
+<!--        <item name="android:actionOverflowButtonStyle">@style/AppTheme.OverFlow</item>-->
+    </style>
+    <!-- For Splash Screen -->
+    <!--스플래쉬 테마의 액션바 제거-->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <!--스플래쉬 테마의 xml 파일 이름-->
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+    <!-- 탭 레이아웃 커스텀 -->
+    <style name="CustomTabText">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+<!-- 오버플로우 아이콘 -->
+<!--    <style name="AppTheme.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">-->
+<!--        <item name="android:src">@drawable/ic_chat_bubble_outline_white_32dp</item>-->
+<!--    </style>-->
+
+</resources>

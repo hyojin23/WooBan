@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/video_watch_reply_modify_menu_text"
+        android:title="@string/video_watch_reply_modify"
+        />
+    <item
+        android:id="@+id/video_watch_reply_delelte_menu_text"
+        android:title="@string/video_watch_reply_delete"
+        />
+
+</menu>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.wooban">
+
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_dog_face"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_dog_face_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".WatchLaterActivity"></activity>
+        <activity android:name=".MyChatRoomListActivity" />
+        <activity android:name=".ChatRoomListActivity" />
+        <activity android:name=".CreateChattingRoomActivity" />
+        <activity android:name=".ChattingActivity" />
+        <activity android:name=".VideoWatchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="wooban.com"
+                    android:scheme="http" />
+                <data
+                    android:host="wooban.com"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".CropActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings_activityaaa" />
+        <activity android:name=".ProfileChangeActivity" />
+        <activity android:name=".VideoInfoAdd" />
+        <activity android:name=".VideoUploadActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SignUpActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme"> <!-- 스플래시 테마 사용 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme"> <!-- 앱 기본 테마 사용 -->
+            <intent-filter>
+
+                <!-- <action android:name="android.intent.action.MAIN" /> -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- 파일 공유를 위해 등록 -->
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="label" /> <!-- 파일 전송을 위한 컨텐트 프로바이더 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.wooban"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider> <!-- 채팅에서 소켓을 실행하는 서비스 -->
+        <service android:name=".SocketService" />
+    </application>
+
+</manifest>

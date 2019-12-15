@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorSplash">#B3E5FC</color>
+    <color name="colorToolbar">#29B6F6</color>
+    <color name="wine">#EA4C88</color>
+    <color name="white">#FFFFFF</color>
+    <color name="idWarning">#C62828</color>
+    <color name="idOk">#304FFE</color>
+    <color name="idMessage">#424242</color>
+    <color name="windowBackground">#1C1C1C</color>
+    <color name="overlay">#AA1C1C1C</color>
+    <color name="lightBlue700">#039BE5</color>
+    <color name="Cyan700">#00ACC1</color>
+    <color name="gray200">#EEEEEE</color>
+    <color name="gray300">#E0E0E0</color>
+    <color name="gray400">#BDBDBD</color>
+    <color name="gray500">#9E9E9E</color>
+    <color name="blue50">#E3F2FD</color>
+    <color name="blue500">#2196F3</color>
+    <color name="blue700">#1976D2</color>
+    <color name="tagColor">#1E88E5</color>
+    <color name="indigo500">#3F51B5</color>
+    <color name="blueA700">#2962FF</color>
+    <color name="red500">#F44336</color>
+
+
+</resources>

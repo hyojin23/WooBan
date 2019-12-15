@@ -1,0 +1,101 @@
+<!--회원가입 및 로그인-->
+<resources>
+    <string name="app_name">우리들의 반려동물</string>
+    <string name="open_drawer">open_drawer</string>
+    <string name="close_drawer">close_drawer</string>
+    <string name="sign_up">회원가입</string>
+    <string name="sign_up_profile_image_change">프로필 이미지 수정</string>
+    <string name="sign_up_name">이름을 입력해주세요</string>
+    <string name="sign_up_email">E-mail 주소를 입력해주세요</string>
+    <string name="sign_up_id">아이디를 입력해주세요</string>
+    <string name="sign_up_password">비밀번호를 입력해주세요</string>
+    <string name="sign_up_auth_hint">인증번호를 입력해주세요</string>
+    <string name="sign_up_auth_text">인증번호받기</string>
+    <string name="sign_up_email_ok">확인</string>
+    <string name="sign_up_button">회원가입</string>
+    <string name="do_login">이미 아이디가 있나요? \n 로그인하기</string>
+    <string name="login">로그인</string>
+    <string name="login_id">아이디</string>
+    <string name="login_password">비밀번호</string>
+    <string name="login_button">로그인</string>
+    <string name="do_sign_up">아직 회원이 아니신가요? \n 회원가입하기</string>
+    <string name="welcome">님 환영합니다!</string>
+    <string name="greeting">즐거운 하루 되세요!</string>
+    <string name="upload_video">UPLOAD VIDEO</string>
+    <string name="read_file">기능 사용을 위한 권한 동의가 필요합니다.</string>
+
+    <string name="navigation_menu_vod_upload">영상 업로드 및 스트리밍</string>
+    <!--    <string name="navigation_menu_streaming">스트리밍 시작하기</string>-->
+    <string name="navigation_menu_watch_later">나중에 볼 영상</string>
+    <string name="navigation_menu_chatting">채팅</string>
+    <string name="navigation_menu_setting">설정</string>
+
+
+    <string name="video_info_add_title_text_view">제목</string>
+    <string name="video_info_add_content_text_view">내용</string>
+    <string name="video_info_add_tag_text_view">태그</string>
+    <string name="video_info_add_recommend_tag_text_view">추천 태그</string>
+
+
+    <string name="profile_change_button">수정하기</string>
+    <string name="title_activity_settings11">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_activity_settings_activityaaa">Settings</string>
+
+    <string name="crop_activity_ok">확인</string>
+
+    <string name="default_icon_dialog_title">원하는 동물을 선택하세요</string>
+
+    <string name="video_capture_text">녹화</string>
+    <string name="streaming_start_text">실시간 스트리밍 시작</string>
+
+    <string name="subscribe">구독</string>
+    <string name="chatting">1:1 대화</string>
+    <string name="next_video">다음 동영상</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="video_reply_information">댓글을 사용할 때는 타인을 존중하고 커뮤니티 가이드를 준수해야 합니다.</string>
+    <string name="video_reply_reply">댓글</string>
+    <string name="video_reply_reply_add">댓글을 추가하려면 눌러주세요</string>
+    <string name="video_reply_popup_edit_text">공개 댓글 추가&#8230;</string>
+
+    <string name="video_watch_reply_modify">수정</string>
+    <string name="video_watch_reply_delete">삭제</string>
+
+    <string name="create_chatting_room_toolbar_title">그룹채팅</string>
+    <string name="create_chatting_room_title_text">채팅방 이름을 입력해주세요.</string>
+    <string name="create_chatting_room_tag_text">#해시태그를 이용해서 채팅방을 소개해 보세요.</string>
+    <string name="create_chatting_room_image_text">원하는 이미지를 선택하여 채팅방을 소개해 보세요.</string>
+    <string name="create_chatting_room_image_select_text">이미지 변경</string>
+
+    <string name="chatting_room_list_text">채팅방 목록</string>
+    <string name="chatting_room_my_room_text">나의 채팅방</string>
+    <string name="chatting_room_add_chatting_room">채팅방 만들기</string>
+    <string name="chatting_room_complete">완료</string>
+    <string name="chatting_room_list_open_chatting">오픈채팅 방 목록</string>
+
+    <string name="chatting_toolbar_menu_out">나기기</string>
+
+    <string name="watch_later_title">나중에 볼 동영상</string>
+
+
+
+
+</resources>
+
