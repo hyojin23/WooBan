@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -67,9 +68,11 @@ public class VideoWatchActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private int video_index;
     private ArrayList<JsonElement> arrayList = new ArrayList();
-    private boolean loadingMore = true;
+    public static boolean loadingMore = true;
     private static final String SEGMENT_VIDEO = "video";
     private VideoViewAsync videoViewAsync;
+    // 댓글 정보를 저장하는 리스트
+    ArrayList<ReplyInfoModel> replyList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,53 +250,13 @@ public class VideoWatchActivity extends AppCompatActivity {
                 Log.d(TAG, "onResponse: jsonObject: " + jsonObject);
                 jsonArray = jsonObject.getAsJsonArray("video_info");
 
-                // Json배열에 담긴 element를 꺼내 arrayList에 넣음
-//                for(JsonElement element : jsonArray) {
-//                    arrayList.add(element);
-//                }
-//                Log.d(TAG, "onResponse: arrayList: "+arrayList);
-
-
                 // 다음 동영상 및 댓글을 보여주는 리사이클러뷰
                 recyclerView = findViewById(R.id.video_watch_next_video_recycler_view);
                 recyclerBottom(recyclerView);
                 recyclerView.setLayoutManager(new LinearLayoutManagerWrapper(VideoWatchActivity.this));
                 Log.d(TAG, "onCreate: 어댑터 객체 생성 및 리사이클러뷰에 어댑터 장착");
                 // 어댑터 객체 생성 및 리사이클러뷰에 어댑터 장착
-                NextVideoAdapter adapter = new NextVideoAdapter(getApplicationContext(), jsonArray, bundle, VideoWatchActivity.this);
-//                adapter.setHeaderViewHolderListener(new NextVideoAdapter.HeaderViewHolderListener() {
-//                    @Override
-//                    public void createHeaderViewHolder() {
-//                        Log.d(TAG, "createHeaderViewHolder: 헤더 뷰홀더 생성되면서 넣어야 할 값을 넣음");
-//                        Log.d(TAG, "createHeaderViewHolder: title: "+title);
-//                        Log.d(TAG, "createHeaderViewHolder:  titleTextView: "+ titleTextView);
-//                        // 영상 제목
-//                        titleTextView.setText(title);
-//                        String text = "조회수 " + views + "회";
-//                        // 조회수
-//                        viewsTextView.setText(text);
-//                        // 이미지 url에 디폴트가 들어가면
-//                        if (profile_image_url.contains("default")) {
-//                            // 기본 이미지 중 선택한 이미지를 이미지뷰에 넣어 보여준다.
-//                            DefaultProfileImage defaultImage = new DefaultProfileImage();
-//                            defaultImage.changeToAnimal(VideoWatchActivity.this, profile_image_url, profileImageView);
-//                        } else {
-//                            // 작성자 프로필 이미지
-//                            Glide.with(VideoWatchActivity.this).load(profile_image_url).apply(RequestOptions.circleCropTransform()).into(profileImageView);
-//                        }
-//                        // 작성자 이름
-//                        nameTextView.setText(name);
-//                        // 영상 설명
-//                        descriptionTextView.setText(description);
-//                        // 영상 업로드 날짜
-//                        dateTextView.setText(post_time);
-//                        // 해시태그 헬퍼
-//                        tagTextView.setText(tag);
-//                        tagTextHashTagHelper = HashTagHelper.Creator.create(getResources().getColor(R.color.tagColor), null);
-//                        tagTextHashTagHelper.handle(tagTextView);
-//
-//                    }
-//                });
+                NextVideoAdapter adapter = new NextVideoAdapter(getApplicationContext(), jsonArray, replyList, bundle, VideoWatchActivity.this);
 
                 // 화살표 클릭을 위한 리스너 설정
 //                findViewById(R.id.next_video_recycler_title_const_layout).setOnClickListener(VideoWatchActivity.this);
@@ -310,31 +273,6 @@ public class VideoWatchActivity extends AppCompatActivity {
 
     }
 
-//    // 리사이클러뷰 하단 감지
-//    private void recyclerBottom() {
-//        Log.d(TAG, "recyclerBottom: 리사이클러뷰 하단 감지 실행");
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                Log.d(TAG, "onScrolled: 스크롤 실행");
-//                super.onScrolled(recyclerView, dx, dy);
-//
-//                int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-//                int itemTotalCount = recyclerView.getAdapter().getItemCount() - 1;
-//                Log.d(TAG, "onScrolled: lastVisibleItemPosition: "+lastVisibleItemPosition);
-//                Log.d(TAG, "onScrolled: itemTotalCount: "+itemTotalCount);
-//                if (lastVisibleItemPosition == itemTotalCount) {
-//                    Log.d(TAG, "last Position...");
-//                    Toast.makeText(VideoWatchActivity.this, "리사이클러뷰 하단 도착", Toast.LENGTH_SHORT).show();
-//                }
-//
-//            }
-//        });
-//
-//
-//
-//    }
-
     // 리사이클러뷰 하단 감지
     private void recyclerBottom(RecyclerView recyclerView) {
         // 리스너 생성
@@ -350,13 +288,12 @@ public class VideoWatchActivity extends AppCompatActivity {
                 int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
                 Log.d(TAG, "onScrolled: totalItemCount: " + totalItemCount);
                 Log.d(TAG, "onScrolled: 마지막 아이템 뷰의 포지션: " + lastVisible);
+                Log.d(TAG, "onScrolled: loadingMore: " + loadingMore);
 
                 if (lastVisible == totalItemCount - 1 && loadingMore) {
                     Log.d(TAG, "리사이클러뷰 하단 도착");
                     // 프로그레스바 참조
                     progressBar = findViewById(R.id.video_watch_progress_circle);
-                    // 프로그레스바를 보이게 한다.
-//                    progressBar.setVisibility(View.VISIBLE);
                     // 댓글 정보를 불러온다.
                     fetchReplyInfo();
                     // 댓글 정보를 한 번 불러온 뒤 다시 불러오는 것을 막는다.
@@ -588,8 +525,6 @@ public class VideoWatchActivity extends AppCompatActivity {
 //    }
 
 
-
-
     // 페이징을 위해 db에 있는 댓글 정보를 불러오는 메소드
     private void fetchReplyInfo() {
 
@@ -598,82 +533,34 @@ public class VideoWatchActivity extends AppCompatActivity {
         Call<JsonObject> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .fetchReplyInfo(getSharedToken(), video_index, 0, jsonArray.size() + 2, 0);
-        Log.d(TAG, "fetchReplyInfo: jsonArray.size()+2: " + jsonArray.size() + 2);
+                .fetchReplyInfo(getSharedToken(), video_index, 0, replyList.size(), 0);
 
         call.enqueue(new Callback<JsonObject>() {
 
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 Log.d(TAG, "onResponse: 댓글 정보 가져오기 성공");
-                JsonObject reply_data = response.body();
-                Log.d(TAG, "onResponse: reply_data: " + reply_data);
+                JsonObject object = response.body();
+                Log.d(TAG, "onResponse: object: " + object);
+                JsonElement element = object.get("reply_info");
+                boolean lastPage = element.getAsJsonArray().get(0).getAsJsonObject().get("last_page").getAsBoolean();
+                // 댓글 총 갯수와 리스트 크기가 같아지면
 
-                /*가져온 댓글 정보가 없으면, 즉 paged_reply_data.size()가 0이 되면 마지막 댓글임을 알리고
-                 * 프로그레스 바를 안보이게 함*/
-                JsonArray pagedReplyData = null;
-                if (reply_data != null) {
-                    pagedReplyData = reply_data.getAsJsonArray("reply_info");
-                    Log.d(TAG, "onResponse: pagedReplyData: " + pagedReplyData);
-                    Log.d(TAG, "onResponse: pagedReplyData.size(): " + pagedReplyData.size());
-                }
-
-
-                if (pagedReplyData != null && pagedReplyData.size() == 0) {
-                    Toast.makeText(VideoWatchActivity.this, "마지막 댓글입니다.", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                }
-
-
-                if (pagedReplyData == null) {
-                    Log.d(TAG, "onResponse: paged_reply_data는 null");
-                } else {
-                    Log.d(TAG, "onResponse: paged_reply_data는 null 아님");
-                }
-
-                // JsonObject가 아닌 값을 넣음(인덱스 5번에 들어가게 됨)
-                jsonArray.add(false);
-
-                /** 어댑터 이용한 프로그레스바 */
-
-                // 어댑터에 변경된 데이터를 알리면 데이터가 false인 포지션에서 프로그레스 바가 나타남
-                // 포지션 7에서 프로그레스 바가 나타남
-                recyclerView.getAdapter().notifyItemInserted(jsonArray.size() + 1);
-                Log.d(TAG, "onResponse: notifyItemInserted 포지션: " + jsonArray.size() + 1);
-                Log.d(TAG, "onResponse: 데이터가 추가된 후 jsonArray: " + jsonArray);
-
-                // 1초 딜레이
-                Handler handler = new Handler();
-                final JsonArray finalPagedReplyData = pagedReplyData;
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // jsonArray 인덱스 5의 데이터(false) 삭제. jsonArray 사이즈 = 5 됨
-                        jsonArray.remove(jsonArray.size() - 1);
-                        int number = jsonArray.size() - 1;
-                        Log.d(TAG, "run: 삭제된 데이터가 있는 인덱스: " + number);
-                        Log.d(TAG, "run: 삭제된 후 jsonArray: " + jsonArray);
-                        // 스크롤 포지션 = 7
-                        int scrollPosition = jsonArray.size() + 2;
-                        // 포지션 7번 아이템이 제거된것을 알림
-                        recyclerView.getAdapter().notifyItemRemoved(scrollPosition);
-
-                        // jsonArray 인덱스 5번부터 페이징해 가져온 댓글들을 넣음
-                        if (finalPagedReplyData != null) {
-                            for (JsonElement element : finalPagedReplyData) {
-                                jsonArray.add(element);
-                            }
-                        }
-                        // 어댑터에 데이터 변경을 알림
-                        Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
-                        // 다시 데이터 로딩이 될 수 있게 함
+                if (NextVideoAdapter.total_reply_count != 0) {
+                    if (lastPage) {
+                        Toast.makeText(VideoWatchActivity.this, "마지막 댓글입니다.", Toast.LENGTH_SHORT).show();
                         loadingMore = true;
+                    } else {
+                        JsonObject reply_data = response.body();
+                        Log.d(TAG, "onResponse: reply_data: " + reply_data);
+                        // 페이징 위한 작업
+                        paging(reply_data);
 
                     }
-                }, 1000);
-
-                Log.d(TAG, "onResponse: 댓글 추가된 jsonArray: " + jsonArray);
-
+                } else {
+                    Toast.makeText(VideoWatchActivity.this, "첫번째 댓글을 남겨보세요!", Toast.LENGTH_SHORT).show();
+                    loadingMore = true;
+                }
 
             }
 
@@ -684,11 +571,6 @@ public class VideoWatchActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-
 
 
     // 딥링크 처리
@@ -921,6 +803,53 @@ public class VideoWatchActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    // 페이징을 위한 작업
+    private void paging(final JsonObject reply_data) {
+        replyList.add(null);
+
+        /** 어댑터 이용한 프로그레스바 */
+
+        // 어댑터에 변경된 데이터를 알리면 데이터가 null인 포지션에서 프로그레스 바가 나타남
+        int num = recyclerView.getAdapter().getItemCount() - 1;
+        recyclerView.getAdapter().notifyItemInserted(num);
+        Log.d(TAG, "onResponse: notifyItemInserted 포지션: " + num);
+        Log.d(TAG, "onResponse: 데이터가 추가된 후 리스트: " + replyList);
+
+        // 1초 딜레이
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // jsonArray 인덱스 5의 데이터(false) 삭제. jsonArray 사이즈 = 5 됨
+                replyList.remove(replyList.size() - 1);
+                int number = replyList.size() - 1;
+                Log.d(TAG, "run: 삭제된 데이터가 있는 인덱스: " + number);
+                Log.d(TAG, "run: 삭제된 후 replyList: " + replyList);
+                // null이 들어간 스크롤 포지션
+                int scrollPosition = replyList.size() + jsonArray.size() + 2;
+                // 스크롤 포지션 아이템이 제거된것을 알림
+                recyclerView.getAdapter().notifyItemRemoved(scrollPosition);
+
+                // 가져온 JsonArray
+                assert reply_data != null;
+                JsonArray array = reply_data.getAsJsonArray("reply_info");
+
+                // JsonArray 안에 있는 JsonObject를 꺼내 파싱
+                for (JsonElement object : array) {
+                    ReplyInfoModel model = new Gson().fromJson(object, ReplyInfoModel.class);
+
+                    // 리스트에 모델 추가
+                    replyList.add(model);
+                    // 어댑터 갱신
+                    Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
+                    // 다시 데이터 로딩이 될 수 있게 함
+                    loadingMore = true;
+                }
+
+            }
+        }, 1000);
     }
 
 

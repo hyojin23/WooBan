@@ -34,7 +34,7 @@ public class WatchLaterActivity extends AppCompatActivity {
 
     ArrayList<WatchLaterVideoModel> videoInfoList = new ArrayList<>();
     private final static String TAG = "WatchLaterActivity";
-    private JsonArray WatchLaterVideoArray;
+    private JsonArray watchLaterVideoArray;
     ImageView profileImageView;
     TextView nameTextView;
     private Bundle bundle;
@@ -90,12 +90,12 @@ public class WatchLaterActivity extends AppCompatActivity {
                 JsonObject data = response.body();
                 // 가져온 JsonArray
                 if (data != null) {
-                    WatchLaterVideoArray = data.getAsJsonArray("watch_later_video_info");
+                    watchLaterVideoArray = data.getAsJsonArray("watch_later_video_info");
                 }
-                Log.d(TAG, "onResponse: WatchLaterVideoArray: "+WatchLaterVideoArray);
+                Log.d(TAG, "onResponse: watchLaterVideoArray: "+watchLaterVideoArray);
 
                 // JsonArray 안에 있는 JsonObject를 꺼내 파싱
-                for (JsonElement object : WatchLaterVideoArray) {
+                for (JsonElement object : watchLaterVideoArray) {
                     WatchLaterVideoModel videoInfo = new Gson().fromJson(object, WatchLaterVideoModel.class);
 
                     // 리스트에 모델 추가

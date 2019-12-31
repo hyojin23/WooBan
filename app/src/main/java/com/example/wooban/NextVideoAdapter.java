@@ -43,6 +43,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -86,9 +87,9 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int reply_adapter_position;
     // 댓글을 불러오는 쿼리문을 구분하기 위해 사용. 0 : 댓글 페이징시, 1: 댓글 추가시 2: 댓글 수정시
     private int is_paging;
-    private int total_reply_count;
+    public static int total_reply_count;
     private static final String SEGMENT_VIDEO = "video";
-//    private replyModifyCallback callback;
+    private ArrayList<ReplyInfoModel> replyList = null;
 
 
     // 헤더 뷰홀더에 대한 리스너 인터페이스
@@ -435,9 +436,10 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     // 수정 메뉴 클릭시
                                     Log.d(TAG, "onMenuItemClick: 수정 클릭됨");
                                     isModifyClicked = true;
+                                    int num = jsonArray.size() + 2;
                                     // 수정 메뉴 클릭시 해당 댓글의 내용과 인덱스 번호를 구함
-                                    selected_reply_content = jsonArray.get(getAdapterPosition() - 2).getAsJsonObject().get("content").getAsString();
-                                    reply_index = jsonArray.get(getAdapterPosition() - 2).getAsJsonObject().get("idx").getAsInt();
+                                    selected_reply_content = replyList.get(getAdapterPosition() - num).getContent();
+                                    reply_index = replyList.get(getAdapterPosition() - num).getIdx();
                                     reply_adapter_position = getAdapterPosition();
                                     // 원래 댓글 내용을 담은 댓글 입력창을 띄움
                                     alertReplyEditDialog(selected_reply_content);
@@ -447,7 +449,7 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     // 삭제 메뉴 클릭시
                                     Log.d(TAG, "onMenuItemClick: 삭제 클릭됨");
                                     // 삭제 메뉴 클릭시 해당 댓글의 인덱스 번호를 구함
-                                    reply_index = jsonArray.get(getAdapterPosition() - 2).getAsJsonObject().get("idx").getAsInt();
+                                    reply_index = replyList.get(getAdapterPosition() - (jsonArray.size() + 2)).getIdx();
                                     Log.d(TAG, "onMenuItemClick: reply_index: " + reply_index);
                                     replyDeleteDialogShow(getAdapterPosition());
                                     break;
@@ -474,40 +476,58 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // 아이템 뷰 타입 지정
     @Override
     public int getItemViewType(int position) {
-
-
-        if (position == 0) {
-            Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
-            Log.d(TAG, "getItemViewType: 헤더 타입");
-            return TYPE_HEADER;
-        } else if (1 <= position && position <= 5) {
-            Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
-            Log.d(TAG, "getItemViewType: 다음 동영상 타입");
-            TYPE_VIDEO_ITEM = position;
-            return TYPE_VIDEO_ITEM;
-        } else if (position == 6) {
-            Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
-            Log.d(TAG, "getItemViewType: 댓글 입력 타입");
-            TYPE_EDIT_REPLY = position;
-            return TYPE_EDIT_REPLY;
-        } else if (position > 6 && jsonArray.get(position - 2).isJsonObject()) {
-            Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
-            Log.d(TAG, "getItemViewType: 댓글 리스트 타입");
-            return TYPE_REPLY_LIST;
-        } else if (!jsonArray.get(position - 2).isJsonObject()) {
-            Log.d(TAG, "getItemViewType: 어댑터에서 포지션: " + position);
-            Log.d(TAG, "getItemViewType: 프로그레스바 타입");
-            return TYPE_PROGRESS;
+        // 다음 동영상이 3개면 num은 5
+        int num = jsonArray.size() + 2;
+        // 다음 동영상 데이터가 5개 미만이면
+        if (jsonArray.size() < 5) {
+            if (position == 0) {
+                return TYPE_HEADER;
+            } else if (1 <= position && position <= jsonArray.size()) {
+                TYPE_VIDEO_ITEM = position;
+                return TYPE_VIDEO_ITEM;
+            } else if (position == jsonArray.size() + 1) {
+                TYPE_EDIT_REPLY = position;
+                return TYPE_EDIT_REPLY;
+            } else if (position > jsonArray.size() + 1 && replyList.get(position - num) != null) {
+                return TYPE_REPLY_LIST;
+            } else {
+                return TYPE_PROGRESS;
+            }
         } else {
-            return 0;
+
+            if (position == 0) {
+                Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
+                Log.d(TAG, "getItemViewType: 헤더 타입");
+                return TYPE_HEADER;
+            } else if (1 <= position && position <= 5) {
+                Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
+                Log.d(TAG, "getItemViewType: 다음 동영상 타입");
+                TYPE_VIDEO_ITEM = position;
+                return TYPE_VIDEO_ITEM;
+            } else if (position == 6) {
+                Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
+                Log.d(TAG, "getItemViewType: 댓글 입력 타입");
+                TYPE_EDIT_REPLY = position;
+                return TYPE_EDIT_REPLY;
+            } else if (position > 6 && replyList.get(position - 7) != null) {
+                Log.d(TAG, "getItemViewType: 어댑터에서 포지션:" + position);
+                Log.d(TAG, "getItemViewType: 댓글 리스트 타입");
+                return TYPE_REPLY_LIST;
+            } else {
+                Log.d(TAG, "getItemViewType: 어댑터에서 포지션: " + position);
+                Log.d(TAG, "getItemViewType: 프로그레스바 타입");
+                return TYPE_PROGRESS;
+            }
         }
+
     }
 
 
     // 생성자
-    public NextVideoAdapter(Context context, JsonArray jsonArray, Bundle bundle, Activity activity) {
+    public NextVideoAdapter(Context context, JsonArray jsonArray, ArrayList<ReplyInfoModel> replyList, Bundle bundle, Activity activity) {
         this.context = context;
         this.jsonArray = jsonArray;
+        this.replyList = replyList;
         this.activity = activity;
         this.bundle = bundle;
     }
@@ -670,7 +690,7 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     intent.putExtra("description", jsonArray.get(position - 1).getAsJsonObject().get("description").getAsString());
                     // 글 작성 시간
                     intent.putExtra("post_time_millis", video_duration);
-                    Log.d(TAG, "onClick: 글 작성 시간: "+video_duration);
+                    Log.d(TAG, "onClick: 글 작성 시간: " + video_duration);
                     // 영상 태그
                     intent.putExtra("tag", jsonArray.get(position - 1).getAsJsonObject().get("tag").getAsString());
                     // 내 이름과 내 프로필 이미지 번들 객체 전송
@@ -711,33 +731,30 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             // 댓글
         } else if (holder instanceof ReplyViewHolder) {
-            /* 헤더가 postion 0, 푸터가 position 6 이므로 댓글은 postion 7부터 시작. jsonArray에서 댓글은 index 5번 부터 시작되므로
+            /* 헤더가 postion 0, 푸터가 position 6 이므로 댓글은 position 7부터 시작. jsonArray에서 댓글은 index 5번 부터 시작되므로
             position - 2 해야함 */
             Log.d(TAG, "onBindViewHolder: 댓글 목록 뷰홀더 객체일 경우");
             final ReplyViewHolder replyViewHolder = (ReplyViewHolder) holder;
-            // 프로그레스 바 보이게 함
-//            replyViewHolder.progressBar.setVisibility(View.VISIBLE);
+            int num = position - (jsonArray.size() + 2);
+
             // 이름
-            String reply_name = jsonArray.get(position - 2).getAsJsonObject().get("name").getAsString();
+            String reply_name = replyList.get(num).getName();
             Log.d(TAG, "onBindViewHolder: reply_name: " + reply_name);
             // 프로필 이미지
-            String reply_profile_image_url = jsonArray.get(position - 2).getAsJsonObject().get("profile_image_url").getAsString();
+            String reply_profile_image_url = replyList.get(num).getProfileImage();
             // 댓글 작성 시간 밀리세컨드
-            String reply_post_time_millis = jsonArray.get(position - 2).getAsJsonObject().get("post_time_millis").getAsString();
+            long reply_post_time_millis = replyList.get(num).getPostTimeMillis();
             // 댓글 내용
-            String reply_content = jsonArray.get(position - 2).getAsJsonObject().get("content").getAsString();
+            String reply_content = replyList.get(num).getContent();
             Log.d(TAG, "onBindViewHolder: reply_content: " + reply_content);
             // 댓글 좋아요 수
-            String reply_like_count = jsonArray.get(position - 2).getAsJsonObject().get("like_count").getAsString();
+            String reply_like_count = String.valueOf(replyList.get(num).getLikeCount());
             // 댓글 싫어요 수
-            String reply_dislike_count = jsonArray.get(position - 2).getAsJsonObject().get("dislike_count").getAsString();
-            // 댓글 인덱스 번호
-//            reply_index = jsonArray.get(position - 2).getAsJsonObject().get("idx").getAsInt();
-            Log.d(TAG, "onBindViewHolder: 포지션 position: " + position);
+            String reply_dislike_count = String.valueOf(replyList.get(num).getDislikeCount());
             // 댓글 작성자 아이디
-            reply_post_id = jsonArray.get(position - 2).getAsJsonObject().get("id").getAsString();
+            reply_post_id = replyList.get(num).getId();
             // 해당 댓글이 수정되었는지 여부(is_paging = 2 이면 수정버튼을 눌러 수정된 것임)
-            int is_modified = jsonArray.get(position - 2).getAsJsonObject().get("is_paging").getAsInt();
+            int is_modified = replyList.get(num).getIsPaging();
 
             Log.d(TAG, "onBindViewHolder: my_id: " + my_id);
             Log.d(TAG, "onBindViewHolder: reply_post_id: " + reply_post_id);
@@ -751,9 +768,8 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
 
-            long reply_post_time_millis_long = Long.parseLong(reply_post_time_millis);
             // 댓글 작성 시간을 몇분전, 몇시간전 형태로 바꿈
-            String reply_post_time_string = formatTimeString(reply_post_time_millis_long);
+            String reply_post_time_string = formatTimeString(reply_post_time_millis);
             // 작성자 이름 + 시간 ex) 골든리트리버 · 1시간 전
             String name_and_post_time = reply_name + " · " + reply_post_time_string;
             // 수정된 댓글일 경우
@@ -768,19 +784,6 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             replyViewHolder.replyContentTextView.setText(reply_content);
             // 좋아요 등록
             replyViewHolder.replyLikeCountTextView.setText(reply_like_count);
-
-//            callback = new replyModifyCallback() {
-//
-//
-//                @Override
-//                public void replyModify(int reply_adapter_position, String content) {
-//                    Log.d(TAG, "replyModify: 댓글 뷰홀더에서 댓글 내용을 바꿈");
-//                    replyViewHolder.replyContentTextView.setText(content);
-//                    Log.d(TAG, "replyModify: content: "+content);
-//                    notifyItemChanged(reply_adapter_position);
-//                    Log.d(TAG, "replyModify: reply_adapter_position: "+reply_adapter_position);
-//                }
-//            };
 
 
         } else {
@@ -825,10 +828,11 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount: 실행");
-        // 헤더와 푸터가 포함되어 +2를 함
-        int size = jsonArray.size() + 2;
+        // 댓글 갯수 + 다음 동영상 갯수 + 헤더와 푸터가 포함되어 +2를 함
+        int size = replyList.size() + jsonArray.size() + 2;
         Log.d(TAG, "getItemCount: 총 아이템 갯수: " + size);
         Log.d(TAG, "getItemCount: jsonArray: " + jsonArray);
+        Log.d(TAG, "getItemCount: replyList: " + replyList);
         return size;
     }
 
@@ -895,8 +899,10 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     Log.d(TAG, "onResponse: 댓글 전송요청 응답 성공");
+                    // 하단 감지 되지 않게 함
+                    VideoWatchActivity.loadingMore = false;
+                    // 댓글을 불러옴
                     fetchReplyInfo();
-
 
                 }
 
@@ -975,41 +981,20 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 Log.d(TAG, "onResponse: replyDataArray: " + replyDataArray);
 
-                if (replyDataArray != null) {
-                    /*jsonArray 인덱스 0~4에는 다음 동영상 정보가 들어있고 인덱스 5부터 댓글 정보가 들어있다.
-                     * 추가된 댓글을 가장 위에 보이게 하기 위해 인덱스 5부터 가져온 댓글을 넣는다.*/
-                    Log.d(TAG, "onResponse: jsonArray.size(): " +jsonArray.size());
-                    for (int i = 5; 4 < i && i < jsonArray.size(); i++) {
-                        JsonObject addedReply = replyDataArray.get(i - 5).getAsJsonObject();
-                        Log.d(TAG, "onResponse: addedReply: " + addedReply);
-                        jsonArray.set(i, addedReply);
-                    }
-
-
+                // JsonArray 안에 있는 JsonObject를 꺼내 파싱
+                for (JsonElement object : replyDataArray) {
+                    ReplyInfoModel model = new Gson().fromJson(object, ReplyInfoModel.class);
+                    // 해당 댓글의 리스트에서 인덱스
+                    // 리스트에 모델 추가
+                    replyList.add(0, model);
+                    Log.d(TAG, "onResponse: 리스트에 댓글 추가");
                 }
-                Log.d(TAG, "onResponse: jsonArray: " + jsonArray);
-
-
-                // jsonArray에 댓글 오브젝트 추가
-//                if (replyDataArray != null) {
-//                    for (JsonElement element : replyDataArray) {
-//                    }
-//                }
-                //
-                notifyItemInserted(7);
                 Toast.makeText(context, "댓글 추가 완료", Toast.LENGTH_SHORT).show();
                 // 다이얼로그 종료
                 dialog.dismiss();
-//                Log.d(TAG, "onResponse: 댓글 추가된 jsonArray: " + jsonArray);
-//                // 1초 뒤 프로그레스 바를 종료한다.
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        // 데이터가 추가되었음을 알려줌
-//                        Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
-//                        progressBar.setVisibility(View.GONE);
-//                    }
-//                }, 1000);
+                notifyItemInserted(jsonArray.size() + 2);
+                VideoWatchActivity.loadingMore = true;
+
             }
 
             @Override
@@ -1044,15 +1029,16 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (newReplyData != null) {
                     // 가져온 데이터 Array
                     JsonArray NewReplyDataArray = newReplyData.getAsJsonArray("reply_info");
-                    // NewReplyDataArray 안 JsonObject
-                    JsonObject newReplyJsonObject = NewReplyDataArray.get(0).getAsJsonObject();
-                    Log.d(TAG, "onResponse: newReplyJsonObject: " + newReplyJsonObject);
-                    Log.d(TAG, "onResponse: reply_adapter_position: " + reply_adapter_position);
 
-                    Log.d(TAG, "onResponse: 수정된 데이터 넣기 전 jsonArray: " + jsonArray);
-                    // jsonArray에 바꿔넣음
-                    jsonArray.set(reply_adapter_position - 2, newReplyJsonObject);
-                    Log.d(TAG, "onResponse: 수정된 데이터 넣은 후 jsonArray: " + jsonArray);
+                    // JsonArray 안에 있는 JsonObject를 꺼내 파싱
+                    for (JsonElement object : NewReplyDataArray) {
+                        ReplyInfoModel model = new Gson().fromJson(object, ReplyInfoModel.class);
+                        // 해당 댓글의 리스트에서 인덱스
+                        int num = reply_adapter_position - (jsonArray.size() + 2);
+                        // 리스트에 모델 추가
+                        replyList.set(num, model);
+                        Log.d(TAG, "onResponse: 리스트에 모델 갱신");
+                    }
                     // 어댑터에 데이터가 변경되었음을 알림
                     notifyDataSetChanged();
                 }
@@ -1090,8 +1076,9 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         replyDelete();
                         /*해당 아이템을 jsonArray에서 삭제(adapter에는 header와 footer가 있기 때문에 getAdapterPosition에서 2를 뺀 값이 jsonArray에서
                          * 해당 댓글의 index이다.*/
-                        Log.d(TAG, "onClick: 어레이에서 댓글 삭제");
-                        jsonArray.remove(getAdapterPosition - 2);
+                        Log.d(TAG, "onClick: 리스트에서 댓글 삭제");
+                        int num = getAdapterPosition - (jsonArray.size() + 2);
+                        replyList.remove(num);
                         Log.d(TAG, "onClick: 댓글 삭제되었음을 어댑터에 반영");
                         // 삭제되었음을 리사이클러뷰 어댑터에 반영
                         notifyItemRemoved(getAdapterPosition);
@@ -1099,7 +1086,6 @@ public class NextVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         Log.d(TAG, "onClick: jsonArray: " + jsonArray);
                         Log.d(TAG, "onClick: reply_index: " + reply_index);
                         notifyItemRangeChanged(getAdapterPosition, jsonArray.size());
-
 
                     }
                 });
